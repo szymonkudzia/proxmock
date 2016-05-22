@@ -3,12 +3,12 @@ package com.sk.app.proxmock
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-import com.sk.app.proxmock.console.ArgsParser
-import com.sk.app.proxmock.application.MockApplication
+import com.sk.app.proxmock.application.ProxmockApplication
 import com.sk.app.proxmock.application.domain._
 import com.sk.app.proxmock.application.domain.actions.mock.StaticMockResponse
 import com.sk.app.proxmock.application.domain.actions.{ConditionalAction, FirstMetCondition}
 import com.sk.app.proxmock.application.domain.conditions.HeaderEquals
+import com.sk.app.proxmock.console.ArgsParser
 import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.apache.commons.io.FileUtils
 
@@ -78,17 +78,17 @@ object Main extends JFXApp {
   }
 
   def listRemote() = {
-    MockApplication.listRemote()
+    ProxmockApplication.listRemote()
     TimeUnit.SECONDS.sleep(1)
   }
 
   def closeRemote(name: String) = {
-    MockApplication.closeRemote(name)
+    ProxmockApplication.closeRemote(name)
     TimeUnit.SECONDS.sleep(1)
   }
 
   def runMock(filePath: String, metaArgs: Array[String]) = {
-    MockApplication.run(filePath, metaArgs)
+    ProxmockApplication.run(filePath, metaArgs)
   }
 
   override def main(args: Array[String]) = {
