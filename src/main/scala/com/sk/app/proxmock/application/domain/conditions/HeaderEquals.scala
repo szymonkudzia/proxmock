@@ -1,4 +1,4 @@
-package com.sk.app.proxmock.mock.domain.conditions
+package com.sk.app.proxmock.application.domain.conditions
 
 /**
  * Created by Szymon on 22.05.2016.

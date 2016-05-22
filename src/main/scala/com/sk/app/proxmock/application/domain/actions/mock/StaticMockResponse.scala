@@ -1,6 +1,6 @@
-package com.sk.app.proxmock.mock.domain.actions.mock
+package com.sk.app.proxmock.application.domain.actions.mock
 
-import com.sk.app.proxmock.mock.domain.actions.Action
+import com.sk.app.proxmock.application.domain.actions.Action
 
 /**
  * Created by Szymon on 22.05.2016.

@@ -1,8 +1,8 @@
-package com.sk.app.proxmock.mock.domain.actions
+package com.sk.app.proxmock.application.domain.actions
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation._
-import com.sk.app.proxmock.mock.domain.actions.mock.StaticMockResponse
+import com.sk.app.proxmock.application.domain.actions.mock.StaticMockResponse
 
 /**
  * Created by Szymon on 20.05.2016.

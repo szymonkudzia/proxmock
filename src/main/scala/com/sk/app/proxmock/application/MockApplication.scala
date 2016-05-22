@@ -1,11 +1,11 @@
-package com.sk.app.proxmock.mock
+package com.sk.app.proxmock.application
 
 import java.io.File
 import java.nio.charset.StandardCharsets._
 import java.util.concurrent.TimeUnit
 
-import com.sk.app.proxmock.mock.configuration.MockArguments
-import com.sk.app.proxmock.mock.domain.Config
+import com.sk.app.proxmock.application.configuration.MockArguments
+import com.sk.app.proxmock.application.domain.Config
 import com.sk.app.proxmock.toolset.network.Udp
 import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.apache.commons.io.FileUtils._

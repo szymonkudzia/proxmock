@@ -4,11 +4,11 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 import com.sk.app.proxmock.console.ArgsParser
-import com.sk.app.proxmock.mock.MockApplication
-import com.sk.app.proxmock.mock.domain._
-import com.sk.app.proxmock.mock.domain.actions.mock.StaticMockResponse
-import com.sk.app.proxmock.mock.domain.actions.{ConditionalAction, FirstMetCondition}
-import com.sk.app.proxmock.mock.domain.conditions.HeaderEquals
+import com.sk.app.proxmock.application.MockApplication
+import com.sk.app.proxmock.application.domain._
+import com.sk.app.proxmock.application.domain.actions.mock.StaticMockResponse
+import com.sk.app.proxmock.application.domain.actions.{ConditionalAction, FirstMetCondition}
+import com.sk.app.proxmock.application.domain.conditions.HeaderEquals
 import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.apache.commons.io.FileUtils
 

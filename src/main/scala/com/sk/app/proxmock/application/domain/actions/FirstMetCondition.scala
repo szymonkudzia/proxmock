@@ -1,6 +1,6 @@
-package com.sk.app.proxmock.mock.domain.actions
+package com.sk.app.proxmock.application.domain.actions
 
-import com.sk.app.proxmock.mock.domain.conditions.Condition
+import com.sk.app.proxmock.application.domain.conditions.Condition
 
 /**
  * Created by Szymon on 22.05.2016.

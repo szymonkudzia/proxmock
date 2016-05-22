@@ -1,4 +1,4 @@
-package com.sk.app.proxmock.mock.domain.conditions
+package com.sk.app.proxmock.application.domain.conditions
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation.{JsonSubTypes, JsonTypeInfo}

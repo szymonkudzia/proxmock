@@ -1,4 +1,4 @@
-package com.sk.app.proxmock.mock.domain
+package com.sk.app.proxmock.application.domain
 
 /**
  * Created by Szymon on 18.05.2016.

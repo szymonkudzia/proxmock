@@ -1,6 +1,6 @@
-package com.sk.app.proxmock.mock.configuration
+package com.sk.app.proxmock.application.configuration
 
-import com.sk.app.proxmock.mock.domain.Config
+import com.sk.app.proxmock.application.domain.Config
 
 /**
  * Created by Szymon on 19.05.2016.
