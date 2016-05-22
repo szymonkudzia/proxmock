@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation._
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes(Array(
-  new Type(value = classOf[ActionPicker], name="pickFirstTrue"),
+  new Type(value = classOf[FirstMetConditionAction], name="firstMetCondition"),
   new Type(value = classOf[StaticMockResponseAction], name="staticMockResponse")
 ))
 abstract class Action {
@@ -16,8 +16,8 @@ abstract class Action {
 }
 
 
-case class ActionPicker(
-  conditionalActions: List[ConditionalAction]
+case class FirstMetConditionAction(
+  conditions: List[ConditionalAction]
 ) extends Action
 
 

@@ -95,7 +95,7 @@ object Main extends JFXApp {
     val first = ConditionalAction(HeaderEquals("bigHead", "really big"), firstResponse)
     val second = ConditionalAction(HeaderEquals("smallHead", "really small"), secondResponse)
 
-    val pickFirst = ActionPicker(List(first, second))
+    val pickFirst = FirstMetConditionAction(List(first, second))
     val endpoints = List(Endpoint("/some/path", pickFirst))
 
     val content = Yaml.serialize(Config("cool name", "9090", endpoints))
