@@ -2,7 +2,6 @@ package com.sk.app.proxmock.mock.domain
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation._
-import com.sk.app.proxmock.toolset.serialization.Wrapper
 
 /**
  * Created by Szymon on 20.05.2016.
@@ -22,19 +21,10 @@ case class ActionPicker(
 ) extends Action
 
 
-case class ConditionalAction @JsonIgnore() (
+case class ConditionalAction(
   condition: Condition,
-  @JsonIgnore private val _action: Action
-) {
-
-  @JsonCreator
-  def this(
-            @JsonProperty("condition") condition: Condition,
-            @JsonProperty("action") action: Wrapper[Action]) = this(condition, action())
-
-  @JsonProperty("action")
-  private val action = Wrapper(_action)
-}
+  action: Action
+)
 
 
 case class StaticMockResponseAction(

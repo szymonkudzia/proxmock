@@ -5,52 +5,87 @@ import java.lang.annotation.Annotation
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.core.{JsonGenerator, JsonParser}
 import com.fasterxml.jackson.databind._
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer
+import com.fasterxml.jackson.databind.deser.{ResolvableDeserializer, BeanDeserializerModifier, ContextualDeserializer}
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier
 
 object BetterPolymorphismModule {
   def apply() = {
     val betterPolymorphism = new SimpleModule()
-    betterPolymorphism.addDeserializer(classOf[Wrapper[_]], new PolymorphicDeserializer())
-    betterPolymorphism.addSerializer(classOf[Wrapper[_]], new PolymorphicSerializer())
+    betterPolymorphism.setDeserializerModifier(new PolymorphicDeserializerModifier())
+    betterPolymorphism.setSerializerModifier(new PolymorphicSerializerModifier())
     betterPolymorphism
   }
 }
 
+private class PolymorphicDeserializerModifier extends BeanDeserializerModifier {
+  override def modifyDeserializer(
+    config: DeserializationConfig, beanDesc: BeanDescription, deserializer: JsonDeserializer[_]): JsonDeserializer[_] =
+      new PolymorphicDeserializer(deserializer.asInstanceOf[JsonDeserializer[Object]])
+}
 
-case class Wrapper[T](value: T) {
-  def valueClass() = value.getClass
-  def apply() = value
+private class PolymorphicSerializerModifier extends BeanSerializerModifier {
+  override def modifySerializer(
+     config: SerializationConfig, beanDesc: BeanDescription, serializer: JsonSerializer[_]): JsonSerializer[_] =
+       new PolymorphicSerializer(serializer.asInstanceOf[JsonSerializer[Object]])
 }
 
 
-private class PolymorphicDeserializer private (types: Map[String, Class[_]]) extends JsonDeserializer[Wrapper[_]] with ContextualDeserializer{
-  def this() = this(Map())
 
-  override def deserialize(p: JsonParser, ctxt: DeserializationContext): Wrapper[_] = {
-    val name = p.nextFieldName()
-    p.nextToken()
-    val value = p.readValueAs(types(name))
-    p.nextToken()
+private class PolymorphicDeserializer private (
+    defaultDeserializer: JsonDeserializer[Object],
+    types: Map[String, Class[_]]) extends JsonDeserializer[Object]
+  with ContextualDeserializer with ResolvableDeserializer{
 
-    Wrapper(value)
+  def this(defaultDeserializer: JsonDeserializer[Object]) = this(defaultDeserializer, Map())
+
+  override def deserialize(p: JsonParser, ctxt: DeserializationContext): Object = {
+    types.isEmpty match {
+      case true =>
+        defaultDeserializer.deserialize(p, ctxt)
+
+      case false =>
+        val name = p.nextFieldName()
+        p.nextToken()
+        val value = p.readValueAs(types(name))
+        p.nextToken()
+
+        value.asInstanceOf[Object]
+    }
   }
 
-  override def createContextual(ctxt: DeserializationContext, property: BeanProperty): JsonDeserializer[_] = {
-    val actualClass = property.getType.getBindings.getBoundType(0).getRawClass
+  override def createContextual(ctxt: DeserializationContext, property: BeanProperty): JsonDeserializer[Object] = {
+    property match {
+      case p: BeanProperty =>
+        val actualClass = property.getType.getRawClass
+        new PolymorphicDeserializer(defaultDeserializer, JsonSubTypesUtil.asMap(actualClass))
 
-    new PolymorphicDeserializer(JsonSubTypesUtil.asMap(actualClass))
+      case null =>
+        new PolymorphicDeserializer(defaultDeserializer, Map())
+    }
   }
+
+  override def resolve(ctxt: DeserializationContext) =
+    if (classOf[ResolvableDeserializer].isAssignableFrom(defaultDeserializer.getClass))
+      defaultDeserializer.asInstanceOf[ResolvableDeserializer].resolve(ctxt)
 }
 
 
-private class PolymorphicSerializer extends JsonSerializer[Wrapper[_]] {
-  override def serialize(value: Wrapper[_], gen: JsonGenerator, serializers: SerializerProvider): Unit = {
-    val name = JsonSubTypesUtil.asMapInverted(value.valueClass())(value.valueClass())
+private class PolymorphicSerializer(defaultSerializer: JsonSerializer[Object]) extends JsonSerializer[Object] {
 
-    gen.writeStartObject()
-    gen.writeObjectField(name, value())
-    gen.writeEndObject()
+  override def serialize(value: Object, gen: JsonGenerator, serializers: SerializerProvider): Unit = {
+    val nameOption = JsonSubTypesUtil.asMapInverted(value.getClass).get(value.getClass)
+
+    nameOption match {
+      case Some(name) =>
+        gen.writeStartObject()
+        gen.writeFieldName(name)
+        defaultSerializer.serialize(value, gen, serializers)
+        gen.writeEndObject()
+
+      case None =>
+        defaultSerializer.serialize(value, gen, serializers)
+    }
   }
 }
 
