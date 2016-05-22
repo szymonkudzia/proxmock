@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 
 import com.sk.app.proxmock.mock.configuration.MockArguments
 import com.sk.app.proxmock.mock.domain.Config
-import com.sk.app.proxmock.mock.network.Udp
+import com.sk.app.proxmock.toolset.network.Udp
 import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.apache.commons.io.FileUtils._
 import org.springframework.boot.SpringApplication

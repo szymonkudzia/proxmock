@@ -1,4 +1,4 @@
-package com.sk.app.proxmock.mock.domain
+package com.sk.app.proxmock.mock.domain.conditions
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation.{JsonSubTypes, JsonTypeInfo}
@@ -14,7 +14,3 @@ abstract class Condition {
 
 }
 
-case class HeaderEquals(
-  headerName: String,
-  headerValue: String
-) extends Condition

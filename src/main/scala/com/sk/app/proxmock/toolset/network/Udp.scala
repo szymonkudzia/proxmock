@@ -1,4 +1,4 @@
-package com.sk.app.proxmock.mock.network
+package com.sk.app.proxmock.toolset.network
 
 import java.net.{DatagramPacket, InetAddress, MulticastSocket, SocketException}
 import java.nio.charset.StandardCharsets

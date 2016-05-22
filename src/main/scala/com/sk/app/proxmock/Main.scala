@@ -6,6 +6,9 @@ import java.util.concurrent.TimeUnit
 import com.sk.app.proxmock.console.ArgsParser
 import com.sk.app.proxmock.mock.MockApplication
 import com.sk.app.proxmock.mock.domain._
+import com.sk.app.proxmock.mock.domain.actions.mock.StaticMockResponse
+import com.sk.app.proxmock.mock.domain.actions.{ConditionalAction, FirstMetCondition}
+import com.sk.app.proxmock.mock.domain.conditions.HeaderEquals
 import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.apache.commons.io.FileUtils
 
@@ -89,13 +92,13 @@ object Main extends JFXApp {
   }
 
   override def main(args: Array[String]) = {
-    var firstResponse = StaticMockResponseAction(Map("corrId" -> "1334-dsf23-345"), "{id:3424}", null)
-    var secondResponse = StaticMockResponseAction(Map("corrId" -> "1334-dsf23-345"), null, "c:/response.json")
+    var firstResponse = StaticMockResponse(Map("corrId" -> "1334-dsf23-345"), "{id:3424}", null)
+    var secondResponse = StaticMockResponse(Map("corrId" -> "1334-dsf23-345"), null, "c:/response.json")
 
     val first = ConditionalAction(HeaderEquals("bigHead", "really big"), firstResponse)
     val second = ConditionalAction(HeaderEquals("smallHead", "really small"), secondResponse)
 
-    val pickFirst = FirstMetConditionAction(List(first, second))
+    val pickFirst = FirstMetCondition(List(first, second))
     val endpoints = List(Endpoint("/some/path", pickFirst))
 
     val content = Yaml.serialize(Config("cool name", "9090", endpoints))
