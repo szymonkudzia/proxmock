@@ -1,16 +1,9 @@
 package com.sk.app.proxmock
 
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 import com.sk.app.proxmock.application.ProxmockApplication
-import com.sk.app.proxmock.application.domain._
-import com.sk.app.proxmock.application.domain.actions.mock.StaticMockResponse
-import com.sk.app.proxmock.application.domain.actions.{ConditionalAction, FirstMetCondition}
-import com.sk.app.proxmock.application.domain.conditions.HeaderEquals
 import com.sk.app.proxmock.console.ArgsParser
-import com.sk.app.proxmock.toolset.serialization.Yaml
-import org.apache.commons.io.FileUtils
 
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
@@ -92,21 +85,6 @@ object Main extends JFXApp {
   }
 
   override def main(args: Array[String]) = {
-    var firstResponse = StaticMockResponse(Map("corrId" -> "1334-dsf23-345"), "{id:3424}", null)
-    var secondResponse = StaticMockResponse(Map("corrId" -> "1334-dsf23-345"), null, "c:/response.json")
-
-    val first = ConditionalAction(HeaderEquals("bigHead", "really big"), firstResponse)
-    val second = ConditionalAction(HeaderEquals("smallHead", "really small"), secondResponse)
-
-    val pickFirst = FirstMetCondition(List(first, second))
-    val endpoints = List(Endpoint("/some/path", pickFirst))
-
-    val content = Yaml.serialize(Config("cool name", "9090", endpoints))
-    FileUtils.write(new File("c:\\Users\\Szymon\\Desktop\\test.yaml"), content)
-
-    val parsed = Yaml.parse(content, classOf[Config])
-    println(parsed)
-
     ArgsParser
       .operation("help", _ => showHelp())
       .operation("list", _ => listRemote())

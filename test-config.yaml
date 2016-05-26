@@ -1,2 +1,8 @@
 name: Test name
-port: 9090
+port: 9999
+endpoints:
+- path: /test
+  method: GET
+  action:
+    staticMockResponse:
+      bodyPath: "speed dial.txt"

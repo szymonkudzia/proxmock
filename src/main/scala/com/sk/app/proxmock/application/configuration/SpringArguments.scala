@@ -5,7 +5,7 @@ import com.sk.app.proxmock.application.domain.Config
 /**
  * Created by Szymon on 19.05.2016.
  */
-object MockArguments {
+object SpringArguments {
   def apply(config: Config, args: Array[String]): Array[String] = {
     var result = Map[String, String]()
 

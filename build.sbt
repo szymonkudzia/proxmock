@@ -18,6 +18,7 @@ libraryDependencies ++= Seq(
   "org.springframework.boot" % "spring-boot-starter-web" % springVersion,
   "org.springframework.boot" % "spring-boot-starter-tomcat" % springVersion,
   "org.springframework.boot" % "spring-boot-starter-integration" % springVersion,
+  "org.springframework.integration" % "spring-integration-java-dsl" % "1.1.2.RELEASE",
 
   "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.7.3",
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % "2.7.4",

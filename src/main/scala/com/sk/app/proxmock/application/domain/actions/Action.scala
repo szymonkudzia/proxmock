@@ -2,6 +2,7 @@ package com.sk.app.proxmock.application.domain.actions
 
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation._
+import com.sk.app.proxmock.application.configuration.ConfigurationContext
 import com.sk.app.proxmock.application.domain.actions.mock.StaticMockResponse
 
 /**
@@ -13,6 +14,6 @@ import com.sk.app.proxmock.application.domain.actions.mock.StaticMockResponse
   new Type(value = classOf[StaticMockResponse], name="staticMockResponse")
 ))
 abstract class Action {
-
+  def configure(context: ConfigurationContext)
 }
 
