@@ -1,10 +1,8 @@
 package com.sk.app.proxmock.application.domain.actions.mock
 
-import java.io.File
-
 import com.sk.app.proxmock.application.configuration.ConfigurationContext
 import com.sk.app.proxmock.application.domain.actions.Action
-import org.apache.commons.io.FileUtils
+import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.springframework.integration.support.MessageBuilder
 import org.springframework.integration.transformer.GenericTransformer
 import org.springframework.messaging.Message
@@ -17,53 +15,55 @@ import scala.collection.JavaConverters._
  */
 case class StaticMockResponse
 (
-  headers: Option[Map[String, String]],
+  headers: Option[Map[String, Object]],
   headersPath: Option[String],
   bodyContent: Option[String],
   bodyPath: Option[String]
 ) extends Action {
 
   override def configure(context: ConfigurationContext): Unit = {
-    val headers = fetchHeaders()
-    val body = fetchBody(context.configRootDir)
+    val bodyProvider = () => fetchBody(context)
 
     context
       .flowBuilder
-      .transform(Transformer(headers, body))
+      .transform(Transformer(headersProvider(context), bodyProvider))
+  }
+
+  private def headersProvider(context: ConfigurationContext) = () => {
+    val headers = fetchHeaders(context)
+    headers.keys foreach context.addOutboundHeaderPattern
+    headers
   }
 
 
-  private def fetchHeaders(): Map[String, String] = {
-    Map()
-  }
+  private def fetchHeaders(context: ConfigurationContext): Map[String, Object] =
+    headers.getOrElse(Map()) ++ headersPath.map(fileToMap(_, context)).getOrElse(Map())
 
+  private def fetchBody(context: ConfigurationContext): String =
+    bodyContent.getOrElse(bodyPath.map(context.fileToString).get)
 
-  private def fetchBody(confRootDir: String): String =
-    bodyContent.getOrElse(bodyPath.map(fileToString(_, confRootDir)).get)
-
-
-  private def fileToString(path: String, parentDir: String) = {
-    var file = new File(path)
-    if (!file.exists()) file = new File(parentDir, path)
-    
-    FileUtils.readFileToString(file)
-  }  
+  private def fileToMap(path: String, context: ConfigurationContext): Map[String, String] =
+    Yaml.parse(context.fileToString(path), classOf[Map[String, String]])
 }
 
 
 
 private class Transformer
-  (headers: Map[String, String], body: String)
+  (headersProvider: () => Map[String, Object],
+   bodyProvider: () => String)
     extends GenericTransformer[Message[String], Message[String]] {
 
   override def transform(source: Message[String]): Message[String] =
     MessageBuilder
-      .withPayload(body)
+      .withPayload(bodyProvider())
       .copyHeaders(source.getHeaders)
-      .copyHeaders(headers.asJava)
+      .copyHeaders(headersProvider().asJava)
       .build()
 }
 
 private object Transformer {
-  def apply(headers: Map[String, String], body: String) = new Transformer(headers, body)
+  def apply(
+     headersProvider: () => Map[String, Object],
+     bodyProvider: () => String) =
+    new Transformer(headersProvider, bodyProvider)
 }

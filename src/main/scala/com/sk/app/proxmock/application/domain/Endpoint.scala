@@ -40,9 +40,8 @@ case class Endpoint(
     http.setRequestChannel(input)
     http.setReplyChannel(output)
 
-    context.register(s"$path-httpInputGateway", http)
+    context.httpGateway = context.register(s"$path-httpInputGateway", http)
   }
-
 
   private def requestMapping() = {
     val requestMapping = new RequestMapping()

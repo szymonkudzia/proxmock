@@ -5,4 +5,10 @@ endpoints:
   method: GET
   action:
     staticMockResponse:
-      bodyPath: "speed dial.txt"
+      headers:
+        'X-HEADER_1':
+          - first: a
+          - second: b
+        'X-HEADER_2': second header
+      headersPath: 'test-config-headers.yaml'
+      bodyPath: "build.sbt"
