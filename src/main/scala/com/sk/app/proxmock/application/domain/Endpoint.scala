@@ -39,6 +39,7 @@ case class Endpoint(
     http.setRequestMapping(requestMapping())
     http.setRequestChannel(input)
     http.setReplyChannel(output)
+    http.setErrorChannel(output)
 
     context.httpGateway = context.register(s"$path-httpInputGateway", http)
   }

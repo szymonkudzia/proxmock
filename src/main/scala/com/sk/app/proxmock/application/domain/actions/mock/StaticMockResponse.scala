@@ -3,6 +3,7 @@ package com.sk.app.proxmock.application.domain.actions.mock
 import com.sk.app.proxmock.application.configuration.ConfigurationContext
 import com.sk.app.proxmock.application.domain.actions.Action
 import com.sk.app.proxmock.toolset.serialization.Yaml
+import org.springframework.expression.spel.standard.SpelExpressionParser
 import org.springframework.integration.support.MessageBuilder
 import org.springframework.integration.transformer.GenericTransformer
 import org.springframework.messaging.Message
@@ -15,55 +16,53 @@ import scala.collection.JavaConverters._
  */
 case class StaticMockResponse
 (
-  headers: Option[Map[String, Object]],
+  statusCode: Option[String],
+  statusCodePath: Option[String],
+  headers: Option[Map[String, String]],
   headersPath: Option[String],
   bodyContent: Option[String],
-  bodyPath: Option[String]
+  bodyPath: Option[String],
+  definitionPath: Option[String]
 ) extends Action {
 
-  override def configure(context: ConfigurationContext): Unit = {
-    val bodyProvider = () => fetchBody(context)
+  override def configure(context: ConfigurationContext): Unit = definitionPath match {
+    case Some(path) =>
+      val staticMockResponse = Yaml.parse(context.fileToString(path), classOf[StaticMockResponse])
+      staticMockResponse.configure(context)
 
-    context
-      .flowBuilder
-      .transform(Transformer(headersProvider(context), bodyProvider))
+    case None =>
+      context
+        .flowBuilder
+        .transform(new Transformer(context))
   }
 
-  private def headersProvider(context: ConfigurationContext) = () => {
-    val headers = fetchHeaders(context)
-    headers.keys foreach context.addOutboundHeaderPattern
-    headers
-  }
-
-
-  private def fetchHeaders(context: ConfigurationContext): Map[String, Object] =
-    headers.getOrElse(Map()) ++ headersPath.map(fileToMap(_, context)).getOrElse(Map())
+  private def fetchHeaders(context: ConfigurationContext): Map[String, String] =
+    headers.getOrElse(Map()) ++ headersPath.map(context.fileToMap).getOrElse(Map())
 
   private def fetchBody(context: ConfigurationContext): String =
     bodyContent.getOrElse(bodyPath.map(context.fileToString).get)
 
-  private def fileToMap(path: String, context: ConfigurationContext): Map[String, String] =
-    Yaml.parse(context.fileToString(path), classOf[Map[String, String]])
-}
+  private def fetchStatusCode(context: ConfigurationContext): String =
+    statusCodePath.map(context.fileToString).getOrElse(statusCode.getOrElse("200"))
 
 
 
-private class Transformer
-  (headersProvider: () => Map[String, Object],
-   bodyProvider: () => String)
-    extends GenericTransformer[Message[String], Message[String]] {
+  private class Transformer(context: ConfigurationContext)
+    extends GenericTransformer[Message[Object], Message[String]] {
 
-  override def transform(source: Message[String]): Message[String] =
-    MessageBuilder
-      .withPayload(bodyProvider())
-      .copyHeaders(source.getHeaders)
-      .copyHeaders(headersProvider().asJava)
-      .build()
-}
+    override def transform(source: Message[Object]): Message[String] = {
+      val headers = fetchHeaders(context)
+      headers.keys foreach context.addOutboundHeaderPattern
 
-private object Transformer {
-  def apply(
-     headersProvider: () => Map[String, Object],
-     bodyProvider: () => String) =
-    new Transformer(headersProvider, bodyProvider)
+      val statusCode = fetchStatusCode(context)
+      val parser = new SpelExpressionParser()
+      context.httpGateway.setStatusCodeExpression(parser.parseRaw(statusCode))
+
+      MessageBuilder
+        .withPayload(fetchBody(context))
+        .copyHeaders(source.getHeaders)
+        .copyHeaders(headers.asJava)
+        .build()
+    }
+  }
 }

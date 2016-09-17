@@ -3,6 +3,7 @@ package com.sk.app.proxmock.application.configuration
 import java.io.File
 import java.nio.charset.StandardCharsets
 
+import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.apache.commons.io.FileUtils
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.integration.dsl.IntegrationFlowBuilder
@@ -21,7 +22,7 @@ class ConfigurationContext private (
   val configRootDir: String
 ) {
   var httpGateway: HttpRequestHandlingMessagingGateway = null
-  private var outboundHeadersMapping = ListSet[String]()
+  private var outboundHeadersMapping = ListSet[String]("header_1")
 
   def addOutboundHeaderPattern(headerPattern: String): Unit = {
     outboundHeadersMapping += headerPattern
@@ -51,6 +52,9 @@ class ConfigurationContext private (
   def fileToString(file: File): String = FileUtils.readFileToString(file, StandardCharsets.UTF_8)
 
   def fileToString(path: String): String = fileToString(toFile(path))
+
+  def fileToMap(path: String): Map[String, String] =
+    Yaml.parse(fileToString(path), classOf[Map[String, String]])
 }
 
 

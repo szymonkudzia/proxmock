@@ -13,12 +13,9 @@ class ConfigurationEntrypoint {
   @Autowired
   val context: ConfigurableApplicationContext = null
 
-  @Autowired
-  val config: Config = null
-
   @Bean
-  def startSetup(): String = {
+  def startSetup(@Autowired config: Config): Object = {
     config.configure(context)
-    "done"
+    new Object()
   }
 }
