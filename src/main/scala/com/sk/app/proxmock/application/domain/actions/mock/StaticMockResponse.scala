@@ -2,8 +2,8 @@ package com.sk.app.proxmock.application.domain.actions.mock
 
 import com.sk.app.proxmock.application.configuration.ConfigurationContext
 import com.sk.app.proxmock.application.domain.actions.Action
-import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.springframework.expression.spel.standard.SpelExpressionParser
+import org.springframework.integration.http.HttpHeaders._
 import org.springframework.integration.support.MessageBuilder
 import org.springframework.integration.transformer.GenericTransformer
 import org.springframework.messaging.Message
@@ -21,16 +21,10 @@ case class StaticMockResponse
   headers: Option[Map[String, String]],
   headersPath: Option[String],
   bodyContent: Option[String],
-  bodyPath: Option[String],
-  definitionPath: Option[String]
+  bodyPath: Option[String]
 ) extends Action {
 
-  override def configure(context: ConfigurationContext): Unit = definitionPath match {
-    case Some(path) =>
-      val staticMockResponse = Yaml.parse(context.fileToString(path), classOf[StaticMockResponse])
-      staticMockResponse.configure(context)
-
-    case None =>
+  override def configure(context: ConfigurationContext): Unit = {
       context
         .flowBuilder
         .transform(new Transformer(context))
@@ -56,12 +50,12 @@ case class StaticMockResponse
 
       val statusCode = fetchStatusCode(context)
       val parser = new SpelExpressionParser()
-      context.httpGateway.setStatusCodeExpression(parser.parseRaw(statusCode))
 
       MessageBuilder
         .withPayload(fetchBody(context))
         .copyHeaders(source.getHeaders)
         .copyHeaders(headers.asJava)
+        .setHeader(STATUS_CODE, statusCode)
         .build()
     }
   }
