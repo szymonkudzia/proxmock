@@ -1,7 +1,7 @@
 package com.sk.app.proxmock.toolset.serialization.betterpolymorphism
 
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.{SerializerProvider, JsonSerializer}
+import com.fasterxml.jackson.databind.{JsonSerializer, SerializerProvider}
 
 /**
  * Created by Szymon on 22.05.2016.

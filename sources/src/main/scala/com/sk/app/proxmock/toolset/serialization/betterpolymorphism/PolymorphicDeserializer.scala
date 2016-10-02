@@ -1,8 +1,8 @@
 package com.sk.app.proxmock.toolset.serialization.betterpolymorphism
 
 import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.deser.{ContextualDeserializer, ResolvableDeserializer}
 import com.fasterxml.jackson.databind.{BeanProperty, DeserializationContext, JsonDeserializer}
-import com.fasterxml.jackson.databind.deser.{ResolvableDeserializer, ContextualDeserializer}
 
 /**
  * Created by Szymon on 22.05.2016.
