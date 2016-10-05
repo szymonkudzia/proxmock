@@ -4,11 +4,12 @@ endpoints:
 - path: /test
   method: GET
   action:
-    staticMockResponse:
+    mockResponse:
+      statusCode:
+        static: 500
       headers:
-        'X-HEADER_1':
-          - first: a
-          - second: b
-        'X-HEADER_2': second header
-      headersPath: 'test-config-headers.yaml'
-      bodyPath: "build.sbt"
+        static:
+          header_1: first header
+          header_2: second header
+      body:
+        static: "build.sbt"

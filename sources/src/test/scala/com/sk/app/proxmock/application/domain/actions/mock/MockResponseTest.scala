@@ -17,7 +17,7 @@ object TestData {
 }
 
 @Configuration
-class StaticMockResponseTestConfig {
+class MockResponseTestConfig {
   @Bean
   def enpoint(): String = {
     s"""
@@ -56,7 +56,7 @@ class StaticMockResponseTestConfig {
 /**
  * Created by Szymon on 29.05.2016.
  */
-class StaticMockResponseTest extends BaseIntegrationTest with BeforeAndAfterEach {
+class MockResponseTest extends BaseIntegrationTest with BeforeAndAfterEach {
 
 
 
