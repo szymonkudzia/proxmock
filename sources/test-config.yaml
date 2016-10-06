@@ -12,4 +12,10 @@ endpoints:
           header_1: first header
           header_2: second header
       body:
-        static: "build.sbt"
+        conditional:
+          condition:
+            random: {}
+          ifTrue:
+            static: "true"
+          ifFalse:
+            static: "false"

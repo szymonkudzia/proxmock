@@ -10,7 +10,9 @@ import org.springframework.messaging.Message
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes(Array(
-  new Type(value = classOf[StaticBodyProvider], name="static")
+  new Type(value = classOf[EmptyBodyProvider], name="empty"),
+  new Type(value = classOf[StaticBodyProvider], name="static"),
+  new Type(value = classOf[ConditionalBodyProvider], name="conditional")
 ))
 abstract class BodyProvider {
   def get(context: ConfigurationContext, message: Message[Object]): String
