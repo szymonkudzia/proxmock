@@ -15,5 +15,5 @@ case class StaticBodyProvider(body: String) extends BodyProvider {
 
 object StaticBodyProvider {
   @JsonCreator
-  def create(body: String) = StaticBodyProvider(body)
+  def create(body: Object) = StaticBodyProvider(body.toString)
 }

@@ -10,7 +10,9 @@ import org.springframework.messaging.Message
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes(Array(
   new Type(value = classOf[HeaderEquals], name="headerEquals"),
-  new Type(value = classOf[RandomCondition], name="random")
+  new Type(value = classOf[RandomCondition], name="random"),
+  new Type(value = classOf[AlwaysTrueCondition], name="alwaysTrue"),
+  new Type(value = classOf[AlwaysFalseCondition], name="alwaysFalse")
 ))
 abstract class Condition {
   def test(message: Message[Object]): Boolean
