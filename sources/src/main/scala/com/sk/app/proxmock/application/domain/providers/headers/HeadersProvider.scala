@@ -10,7 +10,9 @@ import org.springframework.messaging.Message
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes(Array(
-  new Type(value = classOf[StaticHeadersProvider], name="static")
+  new Type(value = classOf[EmptyHeadersProvider], name="empty"),
+  new Type(value = classOf[StaticHeadersProvider], name="static"),
+  new Type(value = classOf[ConditionalHeadersProvider], name="conditional")
 ))
 abstract class HeadersProvider {
   def get(context: ConfigurationContext, message: Message[Object]): Map[String, String]

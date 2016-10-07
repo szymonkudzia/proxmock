@@ -6,11 +6,23 @@ endpoints:
   action:
     mockResponse:
       statusCode:
-        static: 500
+        conditional:
+          condition:
+            random: {}
+          ifTrue:
+            static: 500
+          ifFalse:
+            success: {}
       headers:
-        static:
-          header_1: first header
-          header_2: second header
+        conditional:
+          condition:
+            random: {}
+          ifTrue:
+            static:
+              header_1: first header
+              header_2: second header
+          ifFalse:
+            empty: {}
       body:
         conditional:
           condition:

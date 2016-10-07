@@ -10,7 +10,9 @@ import org.springframework.messaging.Message
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes(Array(
-  new Type(value = classOf[StaticStatusCodeProvider], name="static")
+  new Type(value = classOf[SuccessStatusCodeProvider], name="success"),
+  new Type(value = classOf[StaticStatusCodeProvider], name="static"),
+  new Type(value = classOf[ConditionalStatusCodeProvider], name="conditional")
 ))
 abstract class StatusCodeProvider {
   def get(context: ConfigurationContext, message: Message[Object]): Int
