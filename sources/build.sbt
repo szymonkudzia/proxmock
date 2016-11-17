@@ -23,7 +23,7 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % "2.7.4",
 
   "org.webjars" % "bootstrap" % "3.1.1",
-
+  "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.4",
 
   "org.scalactic" %% "scalactic" % "2.2.6",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",

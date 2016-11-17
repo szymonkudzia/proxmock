@@ -10,7 +10,8 @@ import com.sk.app.proxmock.application.configuration.ConfigurationContext
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes(Array(
   new Type(value = classOf[FirstMetCondition], name="firstMetCondition"),
-  new Type(value = classOf[MockResponse], name="mockResponse")
+  new Type(value = classOf[MockResponse], name="mockResponse"),
+  new Type(value = classOf[Proxy], name="proxy")
 ))
 abstract class Action {
   def configure(context: ConfigurationContext)

@@ -11,7 +11,7 @@ import org.springframework.messaging.MessageChannel
  */
 case class Endpoint(
   path: String,
-  method: HttpMethod,
+  method: Option[HttpMethod],
   action: Action
 ) {
 
@@ -46,8 +46,8 @@ case class Endpoint(
 
   private def requestMapping() = {
     val requestMapping = new RequestMapping()
-    requestMapping.setMethods(method)
     requestMapping.setPathPatterns(path)
+    requestMapping.setMethods(method map (Array(_)) getOrElse HttpMethod.values():_*)
     requestMapping
   }
 
@@ -62,7 +62,6 @@ case class Endpoint(
 
   private def validateEndpoint() = {
     require(path != null, "Endpoint path must be not null!")
-    require(method != null, "Endpoint's method must be not null!")
     require(action != null, "Endpoint's action must be specified!")
   }
 }

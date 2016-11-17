@@ -31,3 +31,7 @@ endpoints:
             static: "true"
           ifFalse:
             static: "false"
+- path: /proxy
+  action:
+    proxy:
+      toUrl: http://localhost:9999
