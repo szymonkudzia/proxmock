@@ -3,6 +3,7 @@ package com.sk.app.proxmock.application.domain
 import com.sk.app.proxmock.application.configuration.ConfigurationContext
 import com.sk.app.proxmock.application.domain.actions.Action
 import org.springframework.http.HttpMethod
+import org.springframework.integration.dsl.IntegrationFlowBuilder
 import org.springframework.integration.http.inbound.{HttpRequestHandlingMessagingGateway, RequestMapping}
 import org.springframework.messaging.MessageChannel
 
@@ -26,8 +27,8 @@ case class Endpoint(
 
     action.configure(context)
 
-    val flow = context.flowBuilder.channel(output).get()
-    context.register(s"$path-flow", flow)
+    val flow = context.flowBuilder.channel(output).asInstanceOf[IntegrationFlowBuilder]
+    context.register(s"$path-flow", flow.get())
   }
 
 

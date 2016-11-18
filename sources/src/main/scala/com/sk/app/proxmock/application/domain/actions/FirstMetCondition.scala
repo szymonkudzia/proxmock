@@ -7,7 +7,7 @@ import com.sk.app.proxmock.application.domain.conditions.Condition
  * Created by Szymon on 22.05.2016.
  */
 case class FirstMetCondition(
-   conditions: List[ConditionalAction]
+   conditions: List[CaseAction]
  ) extends Action {
 
   override def configure(context: ConfigurationContext): Unit = {
@@ -18,7 +18,7 @@ case class FirstMetCondition(
 
 
 
-case class ConditionalAction(
+case class CaseAction(
   condition: Condition,
   action: Action
 )

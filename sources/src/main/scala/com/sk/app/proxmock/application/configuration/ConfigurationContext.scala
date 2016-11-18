@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets
 import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.apache.commons.io.FileUtils
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.integration.dsl.IntegrationFlowBuilder
+import org.springframework.integration.dsl.{IntegrationFlowBuilder, IntegrationFlowDefinition}
 import org.springframework.integration.dsl.channel.MessageChannels
 import org.springframework.integration.http.inbound.HttpRequestHandlingMessagingGateway
 import org.springframework.integration.http.support.DefaultHttpHeaderMapper
@@ -18,7 +18,7 @@ import scala.collection.immutable.ListSet
  */
 class ConfigurationContext private (
   val springContext: ConfigurableApplicationContext,
-  val flowBuilder: IntegrationFlowBuilder,
+  var flowBuilder: IntegrationFlowDefinition[_],
   val configRootDir: String
 ) {
   var httpGateway: HttpRequestHandlingMessagingGateway = null

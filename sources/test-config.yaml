@@ -35,3 +35,31 @@ endpoints:
   action:
     proxy:
       toUrl: http://localhost:9999
+- path: /conditionalAction/true
+  method: GET
+  action:
+    mockResponse:
+      statusCode:
+        static: 500
+      headers:
+        empty: {}
+      body:
+        static: "true"
+- path: /conditionalAction
+  method: GET
+  action:
+    conditional:
+      condition:
+        random: {}
+      ifTrue:
+        proxy:
+          toUrl: http://localhost:9999/conditionalAction/true
+      ifFalse:
+        mockResponse:
+          statusCode:
+            static: 200
+          headers:
+            static:
+              header_1: header_1
+          body:
+            static: from ifFalse part
