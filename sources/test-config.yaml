@@ -34,7 +34,8 @@ endpoints:
 - path: /proxy
   action:
     proxy:
-      toUrl: http://localhost:9999
+      toUrl:
+        static: http://localhost:9999
 - path: /conditionalAction/true
   method: GET
   action:
@@ -53,7 +54,8 @@ endpoints:
         random: {}
       ifTrue:
         proxy:
-          toUrl: http://localhost:9999/conditionalAction/true
+          toUrl:
+            static: http://localhost:9999/conditionalAction/true
       ifFalse:
         mockResponse:
           statusCode:

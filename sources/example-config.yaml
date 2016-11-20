@@ -1,0 +1,22 @@
+name: Test
+port: 9999
+endpoints:
+- path: /external/not/cool/service
+  method: GET
+  action:
+    conditional:
+      condition:
+        headerMatches:
+          header: correlation-id
+          pattern: ^MOCK-.*$
+      ifTrue:
+        mockResponse:
+          headers:
+            static:
+              X-SESSION-ID: 9843478794734u8jwf893
+          body:
+            static: mocked body content :)
+      ifFalse:
+        proxy:
+          toUrl:
+            static: http://www.google.com

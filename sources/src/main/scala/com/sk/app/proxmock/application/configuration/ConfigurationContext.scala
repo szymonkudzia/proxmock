@@ -21,8 +21,8 @@ class ConfigurationContext private (
   var flowBuilder: IntegrationFlowDefinition[_],
   val configRootDir: String
 ) {
-  var httpGateway: HttpRequestHandlingMessagingGateway = null
-  private var outboundHeadersMapping = ListSet[String]("header_1")
+  var httpGateway: HttpRequestHandlingMessagingGateway = _
+  private var outboundHeadersMapping = ListSet[String](DefaultHttpHeaderMapper.HTTP_RESPONSE_HEADER_NAME_PATTERN)
 
   def addOutboundHeaderPattern(headerPattern: String): Unit = {
     outboundHeadersMapping += headerPattern
