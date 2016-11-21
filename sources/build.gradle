@@ -16,7 +16,7 @@ apply plugin: 'spring-boot'
 
 jar {
     baseName = 'proxmock'
-    version =  '0.0.1-ALPHA-SNAPSHOT'
+    version =  '0.0.1-ALPHA'
 }
 
 repositories {
