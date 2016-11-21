@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import com.sk.app.proxmock.application.ProxmockApplication
 import com.sk.app.proxmock.console.ArgsParser
+import org.slf4j.LoggerFactory
 
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
@@ -15,7 +16,6 @@ import scalafx.scene.paint.Color._
  * Created by Szymon on 15.05.2016.
  */
 object Main extends JFXApp {
-
   stage = new PrimaryStage {
     title = "ScalaFX Hello World"
     scene = new Scene {
@@ -92,7 +92,7 @@ object Main extends JFXApp {
       .unaryOperation("run", (filePath, metaArgs) => runMock(filePath, metaArgs))
       .defaultOperation(_ => super.main(args))
       .error(exception => {
-        println(exception.getMessage)
+        exception.printStackTrace(System.out)
         showHelp()
       })
       .parse(args)

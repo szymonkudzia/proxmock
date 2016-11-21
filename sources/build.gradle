@@ -1,0 +1,63 @@
+buildscript {
+    ext {
+        springVersion = '1.3.8.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springVersion")
+    }
+}
+
+apply plugin: 'scala'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'proxmock'
+    version =  '0.0.1-ALPHA-SNAPSHOT'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.spring.io/release" }
+}
+
+dependencies {
+    compile "org.scalafx:scalafx_2.11:8.0.92-R10"
+    compile "io.reactivex:rxscala_2.11:0.26.1"
+    compile "org.springframework.boot:spring-boot-starter:$springVersion"
+    compile "org.springframework.boot:spring-boot-autoconfigure:$springVersion"
+    compile "org.springframework.boot:spring-boot-starter-web:$springVersion"
+    compile "org.springframework.boot:spring-boot-starter-tomcat:$springVersion"
+    compile "org.springframework.boot:spring-boot-starter-integration:$springVersion"
+    compile "org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE"
+
+    compile("com.fasterxml.jackson.core:jackson-core:2.7.3") {
+        force = true
+    }
+    compile("com.fasterxml.jackson.core:jackson-databind:2.7.3") {
+        force = true
+    }
+    compile("com.fasterxml.jackson.core:jackson-annotations:2.7.3") {
+        force = true
+    }
+
+    compile "com.fasterxml.jackson.module:jackson-module-scala_2.11:2.7.3"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.7.4"
+
+    compile "org.webjars:bootstrap:3.1.1"
+    compile "org.scala-lang.modules:scala-xml_2.11:1.0.4"
+    compile "org.scalactic:scalactic_2.11:2.2.6"
+
+    testCompile "org.scalatest:scalatest_2.11:2.2.6"
+    testCompile "org.springframework.boot:spring-boot-starter-test:$springVersion"
+    testCompile "com.jayway.restassured:rest-assured:2.9.0"
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.with {
+        force = true
+    }
+}
