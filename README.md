@@ -35,9 +35,9 @@ or by proxying them to andother service
 #### Example:
 To run proxmock you need two things `proxmock.jar` and configuration file.
 First one you can find on this repo in `distribution` catalog, second one 
-you can find below or write one by yourself :) 
+you can write by yourself or use the one listed below. 
 
-Or use this short exemplary configuration: `config.yaml`
+Exemplary configuration `config.yaml`:
 ```yaml 
 name: Test
 port: 9999
