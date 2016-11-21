@@ -3,14 +3,14 @@
 In short proxmock is: 
 >Simple application for smart mocking services with request proxying capabilities
 
-#### features:
+#### Features:
 * mocking
 * smart mocking - dynamic responses depending on requests
 * conditional proxying - send request to real service 
 if mock response is not what you want
 
 
-#### why?
+#### Why?
 Well sometimes external service you are depending on does not work the way you wish it to be :/
 
 For example external service: 
@@ -32,10 +32,10 @@ and others are handled by proxmock, by responding with mocked response
 or by proxying them to andother service 
 (i.e: service running DEV profile instead of PROD)
 
-#### example:
+#### Example:
 To run proxmock you need two things `proxmock.jar` and configuration file.
-First one you can find on this repo in `distribution` catalog second one you have to 
-provide by yourself :) 
+First one you can find on this repo in `distribution` catalog, second one 
+you can find below or write one by yourself :) 
 
 Or use this short exemplary configuration: `config.yaml`
 ```yaml 
@@ -65,7 +65,7 @@ endpoints:
 
 To run proxmock with this configuration simply type in terminal this line:
 ```sh
-java proxmock.jar run config.yaml
+java -jar proxmock.jar run config.yaml
 ```
 
 After executing above command proxmock will run and start listening under address
@@ -76,3 +76,43 @@ proxmock will respond with mocked response (one custome header `X-SESSION-ID` an
 
 Otherwise if request does not have header `correlation-id` or value does not start with `MOCK-` then it
 will be proxied to address `http://www.google.com`
+
+## Configuration 
+* [Actions](#Actions)
+  * [MockResponse](#MockResponse)
+    * [StatusCodeProvider](#StatusCodeProvider)
+    * [HeadersProvider](#HeadersProvider)
+    * [BodyProvider](#BodyProvider)
+  * [Proxy](#Proxy)
+    * [ToUrlProvider](#ToUrlProvider)
+  * [ConditionalAction](#ConditionalAction)
+* [Conditions](#Conditions)
+
+
+<a href="Actions"></a>
+### Actions
+
+<a href="MockResponse"></a>
+#### MockResponse
+
+<a href="StatusCodeProvider"></a>
+##### StatusCodeProvider
+
+<a href="HeadersProvider"></a>
+##### HeadersProvider
+
+<a href="BodyProvider"></a>
+##### BodyProvider
+
+
+<a href="Proxy"></a>
+#### Proxy
+
+<a href="ToUrlProvider"></a>
+##### ToUrlProvider
+
+
+<a href="ConditionalAction"></a>
+#### ConditionalAction
+<a href="Conditions"></a>
+### Conditions
