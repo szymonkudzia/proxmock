@@ -19,7 +19,7 @@ case class ConditionalStatusCodeProvider(
   requireNonNull(ifTrue, "ifTrue of conditional status code provider cannot be null")
 
   override def get(context: ConfigurationContext, message: Message[Object]): Int =
-    condition.test(message) match {
+    condition.test(message, context) match {
       case true => ifTrue.get(context, message)
       case false => Option(ifFalse).getOrElse(SuccessStatusCodeProvider()).get(context, message)
     }

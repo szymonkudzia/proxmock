@@ -19,7 +19,7 @@ case class ConditionalBodyProvider(
   requireNonNull(ifTrue, "ifTrue of conditional body provider cannot be null")
 
   override def get(context: ConfigurationContext, message: Message[Object]): String =
-    condition.test(message) match {
+    condition.test(message, context) match {
       case true => ifTrue.get(context, message)
       case false => Option(ifFalse).getOrElse(EmptyBodyProvider()).get(context, message)
     }

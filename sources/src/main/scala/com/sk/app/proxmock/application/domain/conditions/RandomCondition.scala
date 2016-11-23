@@ -1,5 +1,6 @@
 package com.sk.app.proxmock.application.domain.conditions
 
+import com.sk.app.proxmock.application.configuration.ConfigurationContext
 import org.springframework.messaging.Message
 
 import scala.util.Random
@@ -10,5 +11,5 @@ import scala.util.Random
 case class RandomCondition() extends Condition {
   val random = new Random()
 
-  override def test(message: Message[Object]): Boolean = random.nextBoolean()
+  override def test(message: Message[Object], context: ConfigurationContext): Boolean = random.nextBoolean()
 }

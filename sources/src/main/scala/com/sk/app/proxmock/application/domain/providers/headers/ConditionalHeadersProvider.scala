@@ -19,7 +19,7 @@ case class ConditionalHeadersProvider(
   requireNonNull(ifTrue, "ifTrue of conditional headers provider cannot be null")
 
   override def get(context: ConfigurationContext, message: Message[Object]): Map[String, String] =
-    condition.test(message) match {
+    condition.test(message, context) match {
       case true => ifTrue.get(context, message)
       case false => Option(ifFalse).getOrElse(EmptyHeadersProvider()).get(context, message)
     }

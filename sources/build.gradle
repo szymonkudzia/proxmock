@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
     compile "org.scalafx:scalafx_2.11:8.0.92-R10"
     compile "io.reactivex:rxscala_2.11:0.26.1"
     compile "org.springframework.boot:spring-boot-starter:$springVersion"

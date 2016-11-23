@@ -13,38 +13,41 @@ import org.springframework.integration.dsl.support.Function
 /**
   * Created by szymo on 18/11/2016.
   */
-case class ConditionalAction (
-   condition: Condition,
-   ifTrue: Action,
-   ifFalse: Action
- ) extends Action {
-    requireNonNull(condition, "condition of conditional action cannot be null")
-    requireNonNull(ifTrue, "ifTrue of conditional action cannot be null")
-    requireNonNull(ifFalse, "ifFalse of conditional action cannot be null")
+case class ConditionalAction(
+                              condition: Condition,
+                              ifTrue: Action,
+                              ifFalse: Action
+                            ) extends Action {
+  requireNonNull(condition, "condition of conditional action cannot be null")
+  requireNonNull(ifTrue, "ifTrue of conditional action cannot be null")
+  requireNonNull(ifFalse, "ifFalse of conditional action cannot be null")
 
   override def configure(context: ConfigurationContext): Unit = {
-    context.flowBuilder.route(new ConditionEvaluation(), new SubflowsConfigurer(context))
+    context.flowBuilder.route(conditionEvaluation(context), subflowsConfigurer(context))
   }
 
-  private class ConditionEvaluation extends Function[Message[Object], Boolean] {
-    override def apply(message: Message[Object]): Boolean = condition.test(message)
-  }
-
-  private class SubflowsConfigurer(context: ConfigurationContext) extends Consumer[RouterSpec[MethodInvokingRouter]] {
-    override def accept(mapping: RouterSpec[MethodInvokingRouter]): Unit = {
-      mapping
-        .subFlowMapping("true", new ConfigureAction(ifTrue, context))
-        .subFlowMapping("false", new ConfigureAction(ifFalse, context))
+  def conditionEvaluation(context: ConfigurationContext) =
+    new Function[Message[Object], Boolean] {
+      override def apply(message: Message[Object]): Boolean = condition.test(message, context)
     }
-  }
 
-
-  private class ConfigureAction(action: Action, context: ConfigurationContext) extends IntegrationFlow {
-    override def configure(flow: IntegrationFlowDefinition[_]): Unit = {
-      val flowBuilder = context.flowBuilder
-      context.flowBuilder = flow
-      action.configure(context)
-      context.flowBuilder = flowBuilder
+  def subflowsConfigurer(context: ConfigurationContext) =
+    new Consumer[RouterSpec[MethodInvokingRouter]] {
+      override def accept(mapping: RouterSpec[MethodInvokingRouter]): Unit = {
+        mapping
+          .subFlowMapping("true", configureAction(ifTrue, context))
+          .subFlowMapping("false", configureAction(ifFalse, context))
+      }
     }
-  }
+
+
+  def configureAction(action: Action, context: ConfigurationContext) =
+    new IntegrationFlow {
+      override def configure(flow: IntegrationFlowDefinition[_]): Unit = {
+        val flowBuilder = context.flowBuilder
+        context.flowBuilder = flow
+        action.configure(context)
+        context.flowBuilder = flowBuilder
+      }
+    }
 }
