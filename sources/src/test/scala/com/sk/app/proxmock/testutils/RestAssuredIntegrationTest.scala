@@ -2,7 +2,8 @@ package com.sk.app.proxmock.testutils
 
 import com.jayway.restassured.RestAssured
 import org.scalatest.Suite
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.core.env.Environment
 
 /**
  * Created by Szymon on 21.11.2015.
@@ -12,11 +13,11 @@ import org.springframework.beans.factory.annotation.Value
  */
 
 trait RestAssuredIntegrationTest extends SpringContext { this: Suite =>
-  @Value("${local.server.port}")
-  val serverPort: Integer = null
+  @Autowired
+  val environment: Environment = null
 
   abstract override def beforeAll(): Unit = {
     super.beforeAll()
-    RestAssured.port = serverPort
+    RestAssured.port = environment.getProperty("local.server.port", classOf[Integer])
   }
 }

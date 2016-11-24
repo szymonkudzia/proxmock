@@ -2,3 +2,6 @@
 project/target
 project/project/target
 target
+sources/build
+sources/.gradle
+sources/.history
