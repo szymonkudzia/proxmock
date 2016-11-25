@@ -17,7 +17,7 @@ class EmptyBodyProviderTest extends BaseIntegrationTest("/mock") {
       |        empty: {}
     """
 
-  "MockResponse" should "return empty body when EmptyBodyProvider was used" in {
+  "EmptyBodyProvider" should "return empty body" in {
     get(url("empty/body/provider"))
       .`then`()
           .body(Matchers.isEmptyString)

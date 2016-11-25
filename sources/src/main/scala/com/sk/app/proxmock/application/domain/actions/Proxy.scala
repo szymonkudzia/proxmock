@@ -59,6 +59,21 @@ case class Proxy(toUrl: UrlProvider) extends Action {
     context.httpGateway.setHeaderExpressions(headers)
   }
 
+  private class AddHeaderWithDestinationUrl(context: ConfigurationContext)
+    extends GenericTransformer[Message[Object], Message[Object]] {
+
+    override def transform(source: Message[Object]): Message[Object] = MessageBuilder
+      .fromMessage(source)
+      .setHeader("proxmock_dest_url", determineUrl(context, source))
+      .build()
+
+  }
+
+  def determineUrl(context: ConfigurationContext, source: Message[Object]): String = {
+    val url = appendAcceptingAllRequestPattern(toUrl.get(context, source))
+    url.replace("://localhost/", s"://localhost:${context.getPort}/")
+  }
+
   def appendAcceptingAllRequestPattern(url: String): String =
     if (url.endsWith("{proxmock_anyPath}"))
       url
@@ -66,16 +81,6 @@ case class Proxy(toUrl: UrlProvider) extends Action {
       s"$url{proxmock_anyPath}"
     else
       s"$url/{proxmock_anyPath}"
-
-
-  private class AddHeaderWithDestinationUrl(context: ConfigurationContext)
-    extends GenericTransformer[Message[Object], Message[Object]] {
-
-    override def transform(source: Message[Object]): Message[Object] = MessageBuilder
-      .fromMessage(source)
-      .setHeader("proxmock_dest_url", appendAcceptingAllRequestPattern(toUrl.get(context, source)))
-      .build()
-  }
 
   private class IgnoreErrorResponse extends ResponseErrorHandler {
     override def hasError(response: ClientHttpResponse): Boolean = false

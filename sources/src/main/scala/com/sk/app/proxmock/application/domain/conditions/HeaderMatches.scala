@@ -8,7 +8,11 @@ import org.springframework.messaging.Message
   */
 case class HeaderMatches(header: String, pattern: String) extends Condition {
   override def test(message: Message[Object], context: ConfigurationContext): Boolean = {
-    val headerValue = message.getHeaders.getOrDefault(header, "").toString // headers value are alweys of type String
+    val headerValue = Option(message.getHeaders.get(header))
+      .orElse(Option(message.getHeaders.get(header.toLowerCase)))
+      .map(_.toString)
+      .getOrElse("")
+
     headerValue.matches(pattern)
   }
 }

@@ -15,7 +15,9 @@ import org.springframework.messaging.Message
   new Type(value = classOf[BodyMatches], name="bodyMatches"),
   new Type(value = classOf[RandomCondition], name="random"),
   new Type(value = classOf[AlwaysTrueCondition], name="alwaysTrue"),
-  new Type(value = classOf[AlwaysFalseCondition], name="alwaysFalse")
+  new Type(value = classOf[AlwaysFalseCondition], name="alwaysFalse"),
+  new Type(value = classOf[GroovyExpression], name="groovyExpression"),
+  new Type(value = classOf[GroovyExpressionFile], name="groovyExpressionFile")
 ))
 abstract class Condition {
   def test(message: Message[Object], context: ConfigurationContext): Boolean

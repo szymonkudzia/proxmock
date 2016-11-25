@@ -38,17 +38,15 @@ class ConditionalBodyProviderTest extends BaseIntegrationTest("/mock/conditional
       |            static: $responseWhenConditionIsFalse
     """
 
-  "MockResponse" should
-    "return body given by **ifTrue** provider when condition in ConditionalBodyProvider is true" in {
+  "ConditionalBodyProvider" should "return body given by **ifTrue** provider when condition is true" in {
     get(url("condition/is/true"))
       .`then`()
         .body(Matchers.equalTo(responseWhenConditionIsTrue))
   }
 
-  "MockResponse" should
-    "return body given by **ifFalse** provider when condition in ConditionalBodyProvider is false" in {
+  "MockResponse" should "return body given by **ifFalse** provider when condition is false" in {
     get(url("condition/is/false"))
       .`then`()
-      .body(Matchers.equalTo(responseWhenConditionIsFalse))
+        .body(Matchers.equalTo(responseWhenConditionIsFalse))
   }
 }

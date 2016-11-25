@@ -6,8 +6,8 @@ import java.nio.charset.StandardCharsets
 import com.sk.app.proxmock.toolset.serialization.Yaml
 import org.apache.commons.io.FileUtils
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.integration.dsl.{IntegrationFlowBuilder, IntegrationFlowDefinition}
 import org.springframework.integration.dsl.channel.MessageChannels
+import org.springframework.integration.dsl.{IntegrationFlowBuilder, IntegrationFlowDefinition}
 import org.springframework.integration.http.inbound.HttpRequestHandlingMessagingGateway
 import org.springframework.integration.http.support.DefaultHttpHeaderMapper
 
@@ -40,6 +40,11 @@ class ConfigurationContext private (
     springContext.getBeanFactory.registerSingleton(beanName, initializedBean)
     initializedBean.asInstanceOf[T]
   }
+
+  def getProperty[T](name: String, clazz: Class[T]): T =
+    springContext.getEnvironment.getProperty(name, clazz)
+
+  def getPort: Integer = getProperty("local.server.port", classOf[Integer])
 
   def newDirectChannel(name: String) = register(name, MessageChannels.direct().get())
 
