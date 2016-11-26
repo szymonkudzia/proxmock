@@ -78,41 +78,160 @@ Otherwise if request does not have header `correlation-id` or value does not sta
 will be proxied to address `http://www.google.com`
 
 ## Configuration 
-* [Actions](#Actions)
-  * [MockResponse](#MockResponse)
-    * [StatusCodeProvider](#StatusCodeProvider)
-    * [HeadersProvider](#HeadersProvider)
-    * [BodyProvider](#BodyProvider)
-  * [Proxy](#Proxy)
-    * [ToUrlProvider](#ToUrlProvider)
-  * [ConditionalAction](#ConditionalAction)
-* [Conditions](#Conditions)
+* [Actions](#actions)
+  * [MockResponse](#mockresponse)
+    * [StatusCodeProvider](#statuscodeprovider)
+    * [HeadersProvider](#headersprovider)
+    * [BodyProvider](#bodyprovider)
+  * [Proxy](#proxy)
+    * [ToUrlProvider](#tourlprovider)
+  * [ConditionalAction](#conditionalaction)
+* [Conditions](#conditions)
+  * [Always true](#always-true)
+  * [Always false](#always-false)
+  * [Body matches](#body-matches)
+  * [Groovy expression](#groovy-expression)
+  * [Groovy expression file](#groovy-expression-file)
+  * [Header matches](#header-matches)
+  * [Random](#random)
+  * [Uri matches](#uri-matches)
 
 
-<a href="Actions"></a>
 ### Actions
 
-<a href="MockResponse"></a>
 #### MockResponse
 
-<a href="StatusCodeProvider"></a>
 ##### StatusCodeProvider
 
-<a href="HeadersProvider"></a>
 ##### HeadersProvider
 
-<a href="BodyProvider"></a>
 ##### BodyProvider
 
 
-<a href="Proxy"></a>
 #### Proxy
 
-<a href="ToUrlProvider"></a>
 ##### ToUrlProvider
 
 
-<a href="ConditionalAction"></a>
 #### ConditionalAction
-<a href="Conditions"></a>
+
+
 ### Conditions
+Common conditions to be used in conditional actions and conditional providers.
+
+#### Always true
+Condition that alwasy evaluates to true.
+
+*example*
+```
+...
+conditional:
+  condition:
+    alwaysTrue: {}
+...
+```
+
+#### Always false
+Condition that alwasy evaluates to false.
+
+*example*
+```
+...
+conditional:
+  condition:
+    alwaysFalse: {}
+...
+```
+
+#### Body matches
+Evaluates to true only when body matches specified pattern. 
+>Pattern syntax is same as the one used in Java.
+\
+>In case of missing body, condition evaluates to false.
+
+*example*
+```
+...
+conditional:
+  condition:
+    bodyMatches: .*CONTAINS THIS STRING.*
+...
+```
+
+#### Groovy expression
+Condition given by groovy expression. It will evaluate to true if 
+groovy expression returns boolean true or non null object otherwise 
+(returned value is boolean false, string 'false', null) evaluates to false.
+
+Variable `message` (of type `org.springframework.messaging.Message[Object]`) 
+is available for you in your expression. 
+
+Accessing header map looks as follows: `message.headers`
+\
+Accessing payload looks as follows: `message.payload`
+
+*example*
+```
+...
+conditional:
+  condition:
+    groovyExpression: message.headers.containsKey('expected_header') 
+...
+```
+
+#### Groovy expression file
+Condition that behaves exactly the same way as `Groovy expression` but 
+expression is loaded from file.
+Path to the file can be absolute or relative to the configuration
+file passed when starting proxmock.
+
+*example*
+```
+...
+conditional:
+  condition:
+    groovyExpressionFile: /etc/configs/expression.groovy
+...
+```
+
+#### Header matches
+Evaluates to true when header value matches given pattern.
+>Pattern syntax is same as the one used in Java.
+\
+>In case of missing header, condition evaluates to false.
+
+*example*
+```
+...
+conditional:
+  condition:
+    headerMatches:
+      header: header_name
+      pattern: .*CONTAINS THIS STRING.*
+...
+```
+
+#### Random
+Evaluates to true randomly .
+
+*example*
+```
+...
+conditional:
+  condition:
+    random: {}
+...
+```
+
+#### Uri matches
+Evaluates to true when request uri matches specified pattern.
+>Pattern syntax is same as the one used in Java.
+
+*example*
+```
+...
+conditional:
+  condition:
+    uriMatches: .*/expected/uri.*
+...
+```
