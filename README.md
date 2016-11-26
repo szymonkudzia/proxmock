@@ -81,6 +81,9 @@ will be proxied to address `http://www.google.com`
 * [Actions](#actions)
   * [MockResponse](#mockresponse)
     * [StatusCodeProvider](#statuscodeprovider)
+      * [ConditionalStatusCodeProvider](#conditionalstatuscodeprovider)
+      * [StaticStatusCodeProvider](#staticstatuscodeprovider)
+      * [SuccessStatusCodeProvider](#successtatuscodeprovider)
     * [HeadersProvider](#headersprovider)
     * [BodyProvider](#bodyprovider)
   * [Proxy](#proxy)
@@ -102,6 +105,49 @@ will be proxied to address `http://www.google.com`
 #### MockResponse
 
 ##### StatusCodeProvider
+###### ConditionalStatusCodeProvider
+This provider depending on condition will return status code
+given by provider specified in `ifTrue` or `ifFalse` 
+properties.
+
+*example*
+```yaml
+...
+mockResponse:
+  statusCode:
+    conditional:
+      condition:
+        random: {}
+      ifTrue:
+        static: 300
+      ifFalse:
+        static: 400
+...
+```
+
+###### StaticStatusCodeProvider
+Always returns specified status code.
+
+*example*
+```yaml
+...
+mockResponse:
+  statusCode:
+    static: 404
+...
+```
+
+###### SuccessStatusCodeProvider
+Always returns 200 status code.
+
+*example*
+```yaml
+...
+mockResponse:
+  statusCode:
+    success: {}
+...
+```
 
 ##### HeadersProvider
 
