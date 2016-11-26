@@ -123,7 +123,7 @@ Common conditions to be used in conditional actions and conditional providers.
 Condition that alwasy evaluates to true.
 
 *example*
-```
+```yaml
 ...
 conditional:
   condition:
@@ -135,7 +135,7 @@ conditional:
 Condition that alwasy evaluates to false.
 
 *example*
-```
+```yaml
 ...
 conditional:
   condition:
@@ -150,7 +150,7 @@ Evaluates to true only when body matches specified pattern.
 >In case of missing body, condition evaluates to false.
 
 *example*
-```
+```yaml
 ...
 conditional:
   condition:
@@ -171,7 +171,7 @@ Accessing header map looks as follows: `message.headers`
 Accessing payload looks as follows: `message.payload`
 
 *example*
-```
+```yaml
 ...
 conditional:
   condition:
@@ -186,7 +186,7 @@ Path to the file can be absolute or relative to the configuration
 file passed when starting proxmock.
 
 *example*
-```
+```yaml
 ...
 conditional:
   condition:
@@ -201,7 +201,7 @@ Evaluates to true when header value matches given pattern.
 >In case of missing header, condition evaluates to false.
 
 *example*
-```
+```yaml
 ...
 conditional:
   condition:
@@ -215,7 +215,7 @@ conditional:
 Evaluates to true randomly .
 
 *example*
-```
+```yaml
 ...
 conditional:
   condition:
@@ -228,7 +228,7 @@ Evaluates to true when request uri matches specified pattern.
 >Pattern syntax is same as the one used in Java.
 
 *example*
-```
+```yaml
 ...
 conditional:
   condition:
