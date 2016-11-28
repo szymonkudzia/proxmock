@@ -77,7 +77,8 @@ proxmock will respond with mocked response (one custome header `X-SESSION-ID` an
 Otherwise if request does not have header `correlation-id` or value does not start with `MOCK-` then it
 will be proxied to address `http://www.google.com`
 
-## Configuration 
+## Documentation
+* [Command line interface](#command-line-interface) 
 * [Basics](#basics)
 * [Endpoints](#endpoints)
 * [Actions](#actions)
@@ -107,6 +108,31 @@ will be proxied to address `http://www.google.com`
   * [Random](#random)
   * [Uri matches](#uri-matches)
 
+
+### Command line interface
+<pre>
+list of available commands:
+  list          - list all running instances
+  stop n        - stop instance with name: n
+  help          - displays this information
+  run filepath  - runs proxymock in background with configuration fetched from file under filepath
+                  This command accepts also additional parameters (--name) used by spring boot which
+                  can be used to change proxmock behaviour. i.e.:
+                   proxmock run /file.yaml --server.port=9090
+                  See spring boot documentation for more information about available properties
+</pre>
+*examples*
+
+```sh 
+java -jar proxmock.jar list
+```
+above command will list all running instances
+
+
+```sh
+java -jar proxmoc.jar stop baka
+```
+above command will stop instance with name "baka"
 
 ### Basics
 Proxmock configuration file uses `yaml` syntax and supports only those
