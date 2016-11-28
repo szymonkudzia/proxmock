@@ -78,6 +78,8 @@ Otherwise if request does not have header `correlation-id` or value does not sta
 will be proxied to address `http://www.google.com`
 
 ## Configuration 
+* [Basics](#basics)
+* [Endpoints](#endpoints)
 * [Actions](#actions)
   * [MockResponse](#mockresponse)
     * [StatusCodeProvider](#statuscodeprovider)
@@ -85,7 +87,13 @@ will be proxied to address `http://www.google.com`
       * [StaticStatusCodeProvider](#staticstatuscodeprovider)
       * [SuccessStatusCodeProvider](#successtatuscodeprovider)
     * [HeadersProvider](#headersprovider)
+      * [ConditionalHeadersProvider](#conditionalheadersprovider)
+      * [EmptyHeadersProvider](#emptyheadersprovider)
+      * [StaticHeadersProvider](#staticheadersprovider)
     * [BodyProvider](#bodyprovider)
+      * [ConditionalBodyProvider](#conditionalbodyprovider)
+      * [EmptyBodyProvider](#emptybodyprovider)
+      * [StaticBodyProvider](#staticbodyprovider)
   * [Proxy](#proxy)
     * [ToUrlProvider](#tourlprovider)
   * [ConditionalAction](#conditionalaction)
@@ -100,12 +108,70 @@ will be proxied to address `http://www.google.com`
   * [Uri matches](#uri-matches)
 
 
+### Basics
+Proxmock configuration file uses `yaml` syntax and supports only those
+features which are supported by `jackson yaml dataformat`
+
+There are three properties requeired to be specified in configuration file:
+* name
+* port
+* endpoints
+
+`name` is used in command line interface for listing and shutting down of 
+running proxmock instances 
+\
+`port` specify under which port proxmock http server will listen.
+\
+`endpoints` list of at least one endpoint definition 
+
+*exempla*
+```yaml
+name: TestInstance
+port: 9999
+endpoints:
+- path: /test/path
+  action:
+    proxy:
+      toUrl:
+        static: http://test.server.com/test/path
+```
+
+### Endpoints
+Proxmock alows you to define multiple endpoints. To define single endpoint
+you have to provide three information
+* path - path under which proxmock will wait for requests 
+(syntax is same as in springs @RequestMapping)
+* method - set http method type (if omittet then endpoint will accept all methods types)
+* action - definition of how request should be handled
+
+*example*
+```yaml
+...
+endpoints:
+- path: /test/path
+  method: DELETE
+  action:
+    mockResponse:
+      body:
+        static: |
+          {
+            "content": "this is a mocked json content"
+          }
+      headers:
+        static:
+          session-id: dfw232nf23rfn23
+...
+```
+
 ### Actions
+Actions define the way how proxmock should handle requests.
 
 #### MockResponse
+MockResponse action lets you define mock response by configuring 
+`status code, headers and body` separately by variety of providers.
 
 ##### StatusCodeProvider
-###### ConditionalStatusCodeProvider
+##### ConditionalStatusCodeProvider
 This provider depending on condition will return status code
 given by provider specified in `ifTrue` or `ifFalse` 
 properties.
@@ -125,7 +191,7 @@ mockResponse:
 ...
 ```
 
-###### StaticStatusCodeProvider
+##### StaticStatusCodeProvider
 Always returns specified status code.
 
 *example*
@@ -137,8 +203,8 @@ mockResponse:
 ...
 ```
 
-###### SuccessStatusCodeProvider
-Always returns 200 status code.
+##### SuccessStatusCodeProvider
+Always returns 200 status code. (default status code provider)
 
 *example*
 ```yaml
@@ -150,17 +216,144 @@ mockResponse:
 ```
 
 ##### HeadersProvider
+##### ConditionalHeadersProvider
+This provider depending on condition will return headers
+given by provider specified in `ifTrue` or `ifFalse` 
+properties.
+
+*example*
+```yaml
+...
+mockResponse:
+  headers:
+    conditional:
+      condition:
+        random: {}
+      ifTrue:
+        static: 
+          session-id: h3l4h23j1l2nk 
+      ifFalse:
+        static:
+          session-id: unknown
+...
+```
+
+##### EmptyHeadersProvider
+Always return empty headers map. (default header provider)
+
+*example*
+```yaml
+...
+mockResponse:
+  headers:
+    empty: {}
+...
+```
+
+##### StaticHeadersProvider
+Always returns specified headers.
+
+*example*
+```yaml
+...
+mockResponse:
+  headers:
+    static:
+      session-id: n2wnh34h2
+      corr-id: w3n2nr23o9n4
+...
+```
 
 ##### BodyProvider
+##### ConditionalBodyProvider
+This provider depending on condition will return body
+given by provider specified in `ifTrue` or `ifFalse` 
+properties.
 
+*example*
+```yaml
+...
+mockResponse:
+  body:
+    conditional:
+      condition:
+        random: {}
+      ifTrue:
+        static: success
+      ifFalse:
+        static: failure
+...
+```
+
+##### EmptyBodyProvider
+Always return empty body. (default body provider)
+
+*example*
+```yaml
+...
+mockResponse:
+  body:
+    empty: {}
+...
+```
+
+##### StaticBodyProvider
+Always returns specified body content.
+
+*example*
+```yaml
+...
+mockResponse:
+  body:
+    static: static body content
+...
+```
 
 #### Proxy
+Proxy action lets you forward received request to another service.
+The adderess to where request should be proxied is configured by 
+the UrlProviders. 
 
-##### ToUrlProvider
+Notice: urls `http://localhost/some/uri` will be extended with port 
+specified in configuration file used when starting proxmock, so the final
+url which will be used is `http://localhost:$port/some/uri`
 
+##### UrlProvider
+##### StaticUrlProvider
+Always returns specified url. 
+
+*example*
+```yaml
+...
+proxy:
+  toUrl:
+    static: http://www.google.pl
+...
+```
 
 #### ConditionalAction
+Conditional action alows you to handle request in two different
+ways depending on condition.
 
+*example*
+```yaml
+name: Test
+port: 9999
+endpoints:
+- path: /test
+  action:
+    conditional:
+      condition:
+        random: {}
+      ifTrue:
+        mockResponse:
+          body:
+            static: "mock response"
+      ifFalse:
+        proxy:
+          toUrl:
+            static: http://www.some.service.com/test
+```
 
 ### Conditions
 Common conditions to be used in conditional actions and conditional providers.
