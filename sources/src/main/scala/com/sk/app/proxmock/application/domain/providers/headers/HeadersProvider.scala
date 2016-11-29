@@ -12,6 +12,9 @@ import org.springframework.messaging.Message
 @JsonSubTypes(Array(
   new Type(value = classOf[EmptyHeadersProvider], name="empty"),
   new Type(value = classOf[StaticHeadersProvider], name="static"),
+  new Type(value = classOf[StaticFromFileHeadersProvider], name="staticFromFile"),
+  new Type(value = classOf[GroovyExpressionHeadersProvider], name="groovyExpression"),
+  new Type(value = classOf[GroovyExpressionFromFileHeadersProvider], name="groovyExpressionFromFile"),
   new Type(value = classOf[ConditionalHeadersProvider], name="conditional")
 ))
 abstract class HeadersProvider {
