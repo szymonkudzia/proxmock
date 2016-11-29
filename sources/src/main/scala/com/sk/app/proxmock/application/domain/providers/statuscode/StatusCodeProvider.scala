@@ -12,6 +12,9 @@ import org.springframework.messaging.Message
 @JsonSubTypes(Array(
   new Type(value = classOf[SuccessStatusCodeProvider], name="success"),
   new Type(value = classOf[StaticStatusCodeProvider], name="static"),
+  new Type(value = classOf[StaticFromFileStatusCodeProvider], name="staticFromFile"),
+  new Type(value = classOf[GroovyExpressionStatusCodeProvider], name="groovyExpression"),
+  new Type(value = classOf[GroovyExpressionFromFileStatusCodeProvider], name="groovyExpressionFromFile"),
   new Type(value = classOf[ConditionalStatusCodeProvider], name="conditional")
 ))
 abstract class StatusCodeProvider {
