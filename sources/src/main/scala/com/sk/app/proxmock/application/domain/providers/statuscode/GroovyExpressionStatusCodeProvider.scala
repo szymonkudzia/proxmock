@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.sk.app.proxmock.application.configuration.ConfigurationContext
 import groovy.lang.{Binding, GroovyShell}
 import org.springframework.messaging.Message
+import org.springframework.util.StringUtils._
 
 /**
   * Created by Szymon on 05.10.2016.
   */
 case class GroovyExpressionStatusCodeProvider(expression: String) extends StatusCodeProvider {
+  require(hasText(expression), "expression in GroovyExpressionStatusCodeProvider cannot be blank")
+
   override def get(context: ConfigurationContext, message: Message[Object]): Int = {
     val binding = new Binding()
     binding.setVariable("message", message)

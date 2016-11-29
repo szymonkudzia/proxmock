@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnoreProperties}
 import com.sk.app.proxmock.application.configuration.ConfigurationContext
 import groovy.lang.{Binding, GroovyShell}
 import org.springframework.messaging.Message
+import org.springframework.util.StringUtils._
 
 import scala.collection.JavaConverters._
 
@@ -12,6 +13,7 @@ import scala.collection.JavaConverters._
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 case class GroovyExpressionHeadersProvider(expression: String) extends HeadersProvider {
+  require(hasText(expression), "expression in GroovyExpressionHeadersProvider cannot be blank")
 
   override def get(context: ConfigurationContext, message: Message[Object]) = {
     val binding = new Binding()

@@ -10,7 +10,10 @@ import org.springframework.messaging.Message
   */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes(Array(
-  new Type(value = classOf[StaticUrlProvider], name="static")
+  new Type(value = classOf[StaticUrlProvider], name="static"),
+  new Type(value = classOf[StaticFromFileUrlProvider], name="staticFromFile"),
+  new Type(value = classOf[GroovyExpressionUrlProvider], name="groovyExpression"),
+  new Type(value = classOf[GroovyExpressionFromFileUrlProvider], name="groovyExpressionFromFile")
 ))
 abstract class UrlProvider {
   def get(context: ConfigurationContext, message: Message[Object]): String
