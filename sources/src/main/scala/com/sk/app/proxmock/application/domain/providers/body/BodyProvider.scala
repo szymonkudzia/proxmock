@@ -12,6 +12,9 @@ import org.springframework.messaging.Message
 @JsonSubTypes(Array(
   new Type(value = classOf[EmptyBodyProvider], name="empty"),
   new Type(value = classOf[StaticBodyProvider], name="static"),
+  new Type(value = classOf[StaticBodyFromFileProvider], name="staticFromFile"),
+  new Type(value = classOf[GroovyExpressionBodyProvider], name="groovyExpression"),
+  new Type(value = classOf[GroovyExpressionFromFileBodyProvider], name="groovyExpressionFromFile"),
   new Type(value = classOf[ConditionalBodyProvider], name="conditional")
 ))
 abstract class BodyProvider {

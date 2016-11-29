@@ -1,10 +1,12 @@
 package com.sk.app.proxmock
 
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.util.UUID
 
 import com.sk.app.proxmock.testutils.RestAssuredIntegrationTest
+import org.apache.commons.lang3.RandomStringUtils._
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfterAll, FlatSpec}
@@ -23,13 +25,14 @@ import scala.collection.mutable
 @SpringApplicationConfiguration(classes = Array(classOf[ProxmockTestConfiguration]))
 abstract class BaseIntegrationTest(baseUri: String) extends FlatSpec
   with RestAssuredIntegrationTest with BeanFactoryPostProcessor with BeforeAndAfterAll {
+
   val tempFiles = mutable.ArrayBuffer[File]()
 
-
   override def afterAll(): Unit = {
-    tempFiles.foreach(_.delete())
+    tempFiles
+      .filter(_.exists())
+      .foreach(_.delete())
   }
-
 
   /**
     * create bean with endpoint configuration but with random name otherwise
@@ -43,12 +46,11 @@ abstract class BaseIntegrationTest(baseUri: String) extends FlatSpec
 
   def url(uri: String): String = s"$baseUri/$uri"
 
-  def createTempFile(suffix: String, content: String): File = {
-    val file = File.createTempFile(baseUri.replaceAll("/", "_"), suffix)
+  def createTempFile(content: String): File = {
+    val file = File.createTempFile(randomAlphabetic(5), randomAlphabetic(5))
     tempFiles += file
-    Files.write(file.toPath, content.getBytes)
+    Files.write(file.toPath, content.getBytes(StandardCharsets.UTF_8))
 
     file
   }
-
 }

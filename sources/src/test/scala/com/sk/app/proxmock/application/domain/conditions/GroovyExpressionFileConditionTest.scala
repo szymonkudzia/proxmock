@@ -11,7 +11,7 @@ class GroovyExpressionFileConditionTest extends BaseIntegrationTest("/mock/groov
   val expectedBodyValueIfTrue = "groovy expression ifTrue body"
   val expectedBodyValueIfFalse = "groovy expression ifFalse body"
 
-  val groovyExpressionFile = createTempFile("groovy", "message.headers.containsKey('expected_header')")
+  val groovyExpressionFile = createTempFile("message.headers.containsKey('expected_header')")
 
   override def endpointsYaml(): String =
     s"""
@@ -30,7 +30,7 @@ class GroovyExpressionFileConditionTest extends BaseIntegrationTest("/mock/groov
     """
 
 
-  "GroovyExpressionConditionTest" should "eval to true when groovy expression from file evals to true" in {
+  "GroovyExpressionFileConditionTest" should "eval to true when groovy expression from file evals to true" in {
     given()
         .header("expected_header", "present")
       .when()
@@ -39,7 +39,7 @@ class GroovyExpressionFileConditionTest extends BaseIntegrationTest("/mock/groov
         .body(equalTo(expectedBodyValueIfTrue))
   }
 
-  "GroovyExpressionConditionTest" should "eval to false when groovy expression from file evals to false" in {
+  "GroovyExpressionFileConditionTest" should "eval to false when groovy expression from file evals to false" in {
     post(url("expression/from/file"))
       .`then`()
         .body(equalTo(expectedBodyValueIfFalse))
