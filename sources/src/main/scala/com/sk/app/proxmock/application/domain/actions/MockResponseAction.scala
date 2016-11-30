@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
 /**
  * Created by Szymon on 22.05.2016.
  */
-case class MockResponse
+case class MockResponseAction
 (
   statusCode: StatusCodeProvider,
   headers: HeadersProvider,

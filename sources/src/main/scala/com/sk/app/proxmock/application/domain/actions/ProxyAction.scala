@@ -17,7 +17,7 @@ import org.springframework.web.client.ResponseErrorHandler
 /**
   * Created by Szymon on 22.05.2016.
   */
-case class Proxy(toUrl: UrlProvider) extends Action {
+case class ProxyAction(toUrl: UrlProvider) extends Action {
   val parser = new SpelExpressionParser()
 
   override def configure(context: ConfigurationContext): Unit = {

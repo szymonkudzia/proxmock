@@ -9,10 +9,12 @@ import com.sk.app.proxmock.application.configuration.ConfigurationContext
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes(Array(
-  new Type(value = classOf[FirstMetCondition], name="firstMetCondition"),
-  new Type(value = classOf[MockResponse], name="mockResponse"),
-  new Type(value = classOf[Proxy], name="proxy"),
-  new Type(value = classOf[ConditionalAction], name="conditional")
+  new Type(value = classOf[FirstMetConditionAction], name="firstMetCondition"),
+  new Type(value = classOf[MockResponseAction], name="mockResponse"),
+  new Type(value = classOf[ProxyAction], name="proxy"),
+  new Type(value = classOf[ConditionalAction], name="conditional"),
+  new Type(value = classOf[GroovyExpressionAction], name="groovyExpression"),
+  new Type(value = classOf[GroovyExpressionFromFileAction], name="groovyExpressionFromFile")
 ))
 abstract class Action {
   def configure(context: ConfigurationContext)
