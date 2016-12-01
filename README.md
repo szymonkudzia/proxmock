@@ -82,21 +82,37 @@ will be proxied to address `http://www.google.com`
 * [Basics](#basics)
 * [Endpoints](#endpoints)
 * [Actions](#actions)
-  * [MockResponse](#mockresponse)
+  * [FirstMetConditionAction](#firstmetconditionaction)
+  * [GroovyExpressionAction](#groovyexpressionaction)
+  * [GroovyExpressionFileAction](#groovyexpressionfileaction)
+  * [MockResponseAction](#mockresponseaction)
     * [StatusCodeProvider](#statuscodeprovider)
+      * [GroovyExpressionStatusCodeProvider](#groovyexpressionstatuscodeprovider)
+      * [GroovyExpressionFromFileStatusCodeProvider](#groovyexpressionfromfilestatuscodeprovider)
       * [ConditionalStatusCodeProvider](#conditionalstatuscodeprovider)
       * [StaticStatusCodeProvider](#staticstatuscodeprovider)
+      * [StaticFromFileStatusCodeProvider](#staticfromfilestatuscodeprovider)
       * [SuccessStatusCodeProvider](#successtatuscodeprovider)
     * [HeadersProvider](#headersprovider)
+      * [GroovyExpressionHeadersProvider](#groovyexpressionheadersprovider)
+      * [GroovyExpressionFromFileHeadersProvider](#groovyexpressionfromfileheadersprovider)
       * [ConditionalHeadersProvider](#conditionalheadersprovider)
       * [EmptyHeadersProvider](#emptyheadersprovider)
       * [StaticHeadersProvider](#staticheadersprovider)
+      * [StaticFromFileHeadersProvider](#staticfromfileheadersprovider)
     * [BodyProvider](#bodyprovider)
+      * [GroovyExpressionBodyProvider](#groovyexpressionbodysprovider)
+      * [GroovyExpressionFromFileBodyProvider](#groovyexpressionfromfilebodysprovider)
       * [ConditionalBodyProvider](#conditionalbodyprovider)
       * [EmptyBodyProvider](#emptybodyprovider)
       * [StaticBodyProvider](#staticbodyprovider)
-  * [Proxy](#proxy)
-    * [ToUrlProvider](#tourlprovider)
+      * [StaticFromFileBodyProvider](#staticfromfilebodyprovider)
+  * [ProxyAction](#proxyaction)
+    * [UrlProvider](#urlprovider)
+      * [GroovyExpressionUrlProvider](#groovyexpressionurlprovider)
+      * [GroovyExpressionFromFileUrlProvider](#groovyexpressionfromfileurlprovider)
+      * [StaticUrlProvider](#staticurlprovider)
+      * [StaticFromFileUrlProvider](#staticfromfileurlprovider)
   * [ConditionalAction](#conditionalaction)
 * [Conditions](#conditions)
   * [Always true](#always-true)
@@ -107,7 +123,7 @@ will be proxied to address `http://www.google.com`
   * [Header matches](#header-matches)
   * [Random](#random)
   * [Uri matches](#uri-matches)
-
+* [Miscellaneous](#miscellaneous)
 
 ### Command line interface
 <pre>
@@ -192,11 +208,132 @@ endpoints:
 ### Actions
 Actions define the way how proxmock should handle requests.
 
-#### MockResponse
+#### FirstMetConditionAction
+Extension to ConditionalAction where you can define more than one condition.
+As the name sugests the action of the first met condition will be used
+to provide response.
+If non of condition will be met then error will be returned.
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    firstMetCondition:
+    - condition:
+        uriMatches: .*FIRST_CASE.*
+      action:
+        mockResponse:
+          body:
+            static: FIRST_CASE
+    - condition:
+        uriMatches: .*SECOND_CASE.*
+      action:
+        mockResponse:
+          body:
+            static: SECOND_CASE
+    - condition:
+        alwaysTrue: {}
+      action:
+        mockResponse:
+          body:
+            static: DEFAULT
+...
+```
+
+#### GroovyExpressionAction
+When simple mock response is not what you want then you can use 
+this action to prepare some dynamic response.
+In groovy script you have full control on how the response will
+be constructed.
+
+To create response you can:
+- use the 
+`org.springframework.integration.support.MessageBuilder` builder (which
+is by default imported in your scripts)
+- implement interface
+`org.springframework.messaging.Message` by yourself (which
+is by default imported in your scripts)
+- use any other method for constructing spring integration message object
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    groovyExpression: |
+      MessageBuilder
+        .withPayload('custom body')
+        .setHeader('some_header', 'some header value')
+        .build()
+```
+
+#### GroovyExpressionFromFileAction
+Does everything the same way as GroovyExpressionAction with the difference
+that groovy script is loaded from file.
+Path to the file can be absolute or relative to configuration file passed
+as argument when starting proxmock.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    groovyExpressionFromFile: ../scripts/test.groovy
+...
+```
+
+#### MockResponseAction
 MockResponse action lets you define mock response by configuring 
 `status code, headers and body` separately by variety of providers.
 
 ##### StatusCodeProvider
+##### GroovyExpressionStatusCodeProvider
+If you want to have more control on determining status code of the response
+you can use this provider. From withing your script you can access the 
+message object (of type `org.springframework.messaging.Message`) 
+which holds all request information (like headers and payload).
+From your script you should return single integer value otherwise exception 
+will be raised.
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    mockResponse:
+      statusCode:
+        groovyExpression: 10 + 500 - 210
+...
+```
+
+##### GroovyExpressionFromFileStatusCodeProvider
+Does everything the same way as GroovyExpressionFromFileStatusCodeProvider
+with the difference that groovy script is loaded from file. Path to the
+file can be absolute or relative to configuration file passed as 
+argument when starting proxmock.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    mockResponse:
+      statusCode:
+        groovyExpressionFromFile: ../scripts/test.groovy
+...
+```
+
+
 ##### ConditionalStatusCodeProvider
 This provider depending on condition will return status code
 given by provider specified in `ifTrue` or `ifFalse` 
@@ -229,6 +366,26 @@ mockResponse:
 ...
 ```
 
+##### StaticFromFileStatusCodeProvider
+Does everything the same way as StaticStatusCodeProvider with the difference
+that status code is loaded from file. Path to file can be absolute or
+relative to configuration file passed as argument when starting proxmock.
+File should contains single integer value.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    mockResponse:
+      statusCode:
+        staticFromFile: ../mock/test.txt
+...
+```
+
 ##### SuccessStatusCodeProvider
 Always returns 200 status code. (default status code provider)
 
@@ -242,6 +399,46 @@ mockResponse:
 ```
 
 ##### HeadersProvider
+##### GroovyExpressionHeadersProvider
+If you want to have more control on determining headers of the response
+you can use this provider. From withing your script you can access the 
+message object (of type `org.springframework.messaging.Message`) 
+which holds all request information (like headers and payload).
+From your script you should return `Map[String, String]` otherwise 
+exception will be raised.
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    mockResponse:
+      headers:
+        groovyExpression: "[header_1: 'value_1', header_2: 'value_2']"
+...
+```
+
+##### GroovyExpressionFromFileHeadersProvider
+Does everything the same way as GroovyExpressionFromFileHeadersProvider
+with the difference that groovy script is loaded from file. Path to the
+file can be absolute or relative to configuration file passed as 
+argument when starting proxmock.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    mockResponse:
+      headers:
+        groovyExpressionFromFile: ../scripts/test.groovy
+...
+```
+
 ##### ConditionalHeadersProvider
 This provider depending on condition will return headers
 given by provider specified in `ifTrue` or `ifFalse` 
@@ -290,7 +487,74 @@ mockResponse:
 ...
 ```
 
+##### StaticFromFileHeadersProvider
+Does everything the same way as StaticHeadersProvider with the difference
+that headers is loaded from file. Path to file can be absolute or
+relative to configuration file passed as argument when starting proxmock.
+File is treated as `yaml` file and should contain a map.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    mockResponse:
+      headers:
+        staticFromFile: ../mock/test.yaml
+...
+```
+
+*test.yaml*
+```yaml
+header_1: header 1 value
+header_2: header 2 value
+```
+
 ##### BodyProvider
+##### GroovyExpressionBodyProvider
+If you want to have more control on determining body of the response
+you can use this provider. From withing your script you can access the 
+message object (of type `org.springframework.messaging.Message`) 
+which holds all request information (like body and payload).
+From your script you should return string but also you can return any
+non null object in that case object's toString will be used to 
+determine body value.
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    mockResponse:
+      body:
+        groovyExpression: message.headers
+...
+```
+
+##### GroovyExpressionFromFileBodyProvider
+Does everything the same way as GroovyExpressionFromFileBodyProvider
+with the difference that groovy script is loaded from file. Path to the
+file can be absolute or relative to configuration file passed as 
+argument when starting proxmock.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    mockResponse:
+      body:
+        groovyExpressionFromFile: ../scripts/test.groovy
+...
+```
+
 ##### ConditionalBodyProvider
 This provider depending on condition will return body
 given by provider specified in `ifTrue` or `ifFalse` 
@@ -335,7 +599,26 @@ mockResponse:
 ...
 ```
 
-#### Proxy
+##### StaticFromFileBodyProvider
+Does everything the same way as StaticBodyProvider with the difference
+that body is loaded from file. Path to file can be absolute or
+relative to configuration file passed as argument when starting proxmock.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
+
+*example*
+```yaml
+...
+- path: /test/path
+  method: GET
+  action:
+    mockResponse:
+      body:
+        staticFromFile: ../mock/test.yaml
+...
+```
+
+#### ProxyAction
 Proxy action lets you forward received request to another service.
 The adderess to where request should be proxied is configured by 
 the UrlProviders. 
@@ -345,6 +628,44 @@ specified in configuration file used when starting proxmock, so the final
 url which will be used is `http://localhost:$port/some/uri`
 
 ##### UrlProvider
+##### GroovyExpressionUrlProvider
+If you want to have more control on determining url to which request 
+shoud be proxied you can use this provider. 
+From withing your script you can access the 
+message object (of type `org.springframework.messaging.Message`) 
+which holds all request information (like body and payload).
+From your script you should return string holding url value.
+
+*example*
+```yaml
+...
+- path: /test/path
+  action:
+    proxy:
+      toUrl:
+        groovyExpression: "return 'http://localhost/proxy/to/mock/response'"
+...
+```
+
+##### GroovyExpressionFromFileUrlProvider
+Does everything the same way as GroovyExpressionFromFileUrlProvider
+with the difference that groovy script is loaded from file. Path to the
+file can be absolute or relative to configuration file passed as 
+argument when starting proxmock.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
+
+*example*
+```yaml
+...
+- path: /test/path
+  action:
+    proxy:
+      toUrl:
+        groovyExpressionFromFile: ../scripts/test.groovy
+...
+```
+
 ##### StaticUrlProvider
 Always returns specified url. 
 
@@ -354,6 +675,24 @@ Always returns specified url.
 proxy:
   toUrl:
     static: http://www.google.pl
+...
+```
+
+##### StaticFromFileUrlProvider
+Does everything the same way as StaticUrlProvider with the difference
+that url is loaded from file. Path to file can be absolute or
+relative to configuration file passed as argument when starting proxmock.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
+
+*example*
+```yaml
+...
+- path: /test/path
+  action:
+    proxy:
+      toUrl:
+        staticFromFile: ../mock/test.txt
 ...
 ```
 
@@ -449,6 +788,8 @@ Condition that behaves exactly the same way as `Groovy expression` but
 expression is loaded from file.
 Path to the file can be absolute or relative to the configuration
 file passed when starting proxmock.
+File during proxmock runtime can be freely modified and changes
+will take effect immediatelly. 
 
 *example*
 ```yaml
@@ -500,3 +841,11 @@ conditional:
     uriMatches: .*/expected/uri.*
 ...
 ```
+
+### Miscellaneous
+Proxmock is a spring boot application so it behaves as typical spring boot
+application. For example you can pass some spring properties to change
+default behaviour of application:
+- like override server port by passing property `--server.port` 
+(which takes precedence before port specified in configuration file) 
+- specify log level for classes 
