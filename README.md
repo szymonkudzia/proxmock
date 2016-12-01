@@ -1,4 +1,4 @@
-# Proxmock (alpha)
+# Proxmock (BETA)
 
 In short proxmock is: 
 >Simple application for smart mocking services with request proxying capabilities
